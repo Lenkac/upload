@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins
+  labels:
+    app: jenkins
+spec:
+  capacity:          
+    storage: Gi
+  accessModes:       
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain  
+  mountOptions:
+    - hard
+    - nfsvers=4.1    
+  nfs:            
+    path: /nfs/data/share/jenkins   
+    server: 123.56.21.32
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jenkins
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: Gi
+  selector:
+    matchLabels:
+      app: jenkins
