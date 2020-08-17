@@ -1,0 +1,11 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: el-githab-listener
+spec:
+  routes:
+  - match: Host(`tekton-trigger.k8s.local`)
+    kind: Rule
+    services:
+    - name: el-githab-listener  # 关联 EventListener 服务
+      port: 8080
