@@ -1,0 +1,27 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: githab-listener
+spec:
+  triggers:
+  - name: githab-push-events-trigger
+    interceptors:
+      - github:
+          eventTypes:
+            - push
+    bindings:
+    - ref: githab-push-binding
+    template:
+      name: githab-echo-template  # TriggerTemplate 对象
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: el-githab-listener
+spec:
+  routes:
+  - match: Host(`tekton-trigger.k8s.local`)
+    kind: Rule
+    services:
+    - name: el-githab-listener  # 关联 EventListener 服务
+      port: 8080

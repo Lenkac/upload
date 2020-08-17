@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: java-web
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/Lenkac/sample.git
+    - name: revision
+      value: master

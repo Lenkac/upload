@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: testrun
+spec:
+  serviceAccountName: build-sa
+  taskRef:
+    name: test
+  workspaces:
+    - name: scratchpad
+      emptyDir: {}   
+  resources:
+    inputs:
+    - name: source
+      resourceRef:
+        name: java-web
+    outputs:
+    - name: builtImage
+      resourceRef:
+        name: registry-pipeline-resource

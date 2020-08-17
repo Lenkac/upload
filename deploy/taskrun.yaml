@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: testb
+spec:
+  taskRef:
+    name: test
+  workspaces:
+    - name: scratchpad
+      emptyDir: {}

@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: testb
+spec:
+  workspaces:
+    - name: scratchpad
+  steps:
+    - name: download
+      image: git
+      workingDir: $(workspaces.scratchpad.path)/
+      command:
+        - clone
+      args:
+        - https://github.com/Lenkac/sample.git
+    - name: deploya
+      image: encarna/nohup
+      workingDir: $(workspaces.scratchpad.path)/ kubeext-http-apiserver/
+      command:
+        - java
+      args:
+        - -jar
+        - kubeext-http-apiserver-1.8.2.jar & 
+    - name: deployb
+      image: registry.cn-beijing.aliyuncs.com/acs-sample/jenkins-slave-kubectl:1.11.5
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(workspaces.scratchpad.path)/yamls/
+    - name: deploye
+      image: registry.cn-beijing.aliyuncs.com/acs-sample/jenkins-slave-kubectl:1.11.5
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(workspaces.scratchpad.path)/yamls/frontend/
+    - name: deployc
+      image: registry.cn-beijing.aliyuncs.com/acs-sample/jenkins-slave-kubectl:1.11.5
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(workspaces.scratchpad.path)/yamls/rbac/
+     - name: deployd
+      image: registry.cn-beijing.aliyuncs.com/acs-sample/jenkins-slave-kubectl:1.11.5
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(workspaces.scratchpad.path)/yamls/edgecloud/rbac/
+

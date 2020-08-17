@@ -1,0 +1,31 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: gitlab-listener
+spec:
+  serviceAccountName: tekton-triggers-gitlab-sa
+  triggers:
+  - name: gitlab-push-events-trigger
+    interceptors:
+    - gitlab:
+        secretRef:  
+          secretName: gitlab-secret 
+          secretKey: secretToken
+        eventTypes:
+        - Push Hook  
+    bindings:
+    - name: gitlab-push-binding  
+    template:
+      name: gitlab-echo-template  
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: el-gitlab-listener
+spec:
+  routes:
+  - match: Host(`tekton-trigger.k8s.local`)
+    kind: Rule
+    services:
+    - name: el-gitlab-listener  
+      port: 8080

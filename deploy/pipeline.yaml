@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test-build-push
+spec:
+  resources:
+  - name: repo
+    type: git
+  tasks:
+  - name: test
+    taskRef:
+      name: test
+    resources:
+      inputs:
+      - name: source
+        resource: source
+      outputs:
+      - name: builtImage
+        resourceRef:
+          name: source
+   - name: testb
+     taskRef:
+       name: testb
+     runAfter:
+     - test 
